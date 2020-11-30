@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2018 Pantheon Technologies s.r.o. All Rights Reserved.
+
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License v1.0 which accompanies this distribution,
+  and is available at https://www.eclipse.org/legal/epl-v10.html
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.lighty.core</groupId>
+    <artifactId>dependency-versions</artifactId>
+    <version>14.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>${project.groupId}:${project.artifactId}</name>
+    <url>https://github.com/PANTHEONtech/lighty</url>
+    <description>
+        This artifact contains dependencyManagement declarations of upstream
+        versions.
+    </description>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.opendaylight.odlparent</groupId>
+                <artifactId>odlparent</artifactId>
+                <version>7.0.5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- OpenDaylight projects -->
+            <dependency>
+                <groupId>org.opendaylight.aaa</groupId>
+                <artifactId>aaa-artifacts</artifactId>
+                <version>0.12.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.controller</groupId>
+                <artifactId>controller-artifacts</artifactId>
+                <version>2.0.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.infrautils</groupId>
+                <artifactId>infrautils-artifacts</artifactId>
+                <version>1.8.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.mdsal</groupId>
+                <artifactId>mdsal-artifacts</artifactId>
+                <version>6.0.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.netconf</groupId>
+                <artifactId>netconf-artifacts</artifactId>
+                <version>1.9.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yangtools-artifacts</artifactId>
+                <version>5.0.5</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.opendaylight.openflowplugin</groupId>
+                <artifactId>openflowplugin-artifacts</artifactId>
+                <version>0.11.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.serviceutils</groupId>
+                <artifactId>serviceutils-artifacts</artifactId>
+                <version>0.6.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Other third-party stuff -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>1.7.28</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.inject</groupId>
+                <artifactId>guice</artifactId>
+                <version>4.2.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>6.14.3</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.beust</groupId>
+                <artifactId>jcommander</artifactId>
+                <version>1.78</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.kubernetes</groupId>
+                <artifactId>client-java</artifactId>
+                <version>10.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fusesource.leveldbjni</groupId>
+                <artifactId>leveldbjni-all</artifactId>
+                <version>1.8</version>
+            </dependency>
+            <!--akka management and bootstrap-->
+            <dependency>
+                <groupId>com.lightbend.akka.discovery</groupId>
+                <artifactId>akka-discovery-kubernetes-api_2.13</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lightbend.akka.management</groupId>
+                <artifactId>akka-management_2.13</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lightbend.akka.management</groupId>
+                <artifactId>akka-management-cluster-http_2.13</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.lightbend.akka.management</groupId>
+                <artifactId>akka-management-cluster-bootstrap_2.13</artifactId>
+                <version>1.0.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                  <plugins>
+                      <plugin>
+                          <groupId>org.apache.maven.plugins</groupId>
+                          <artifactId>maven-gpg-plugin</artifactId>
+                          <version>1.6</version>
+                          <executions>
+                              <execution>
+                                  <id>sign-artifacts</id>
+                                  <phase>verify</phase>
+                                  <goals>
+                                      <goal>sign</goal>
+                                  </goals>
+                              </execution>
+                          </executions>
+                      </plugin>
+                  </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License 1.0</name>
+            <url>https://www.eclipse.org/legal/epl-v10.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <connection>scm:git:https://github.com/PANTHEONtech/lighty.git</connection>
+        <developerConnection>scm:git:https://github.com/PANTHEONtech/lighty.git</developerConnection>
+        <url>https://github.com/PANTHEONtech/lighty</url>
+      <tag>HEAD</tag>
+  </scm>
+    <developers>
+        <developer>
+            <id>rovarga</id>
+            <name>Robert Varga</name>
+            <email>robert.varga@pantheon.tech</email>
+            <organization>PANTHEON.tech s.r.o.</organization>
+            <organizationUrl>https://www.pantheon.tech</organizationUrl>
+        </developer>
+    </developers>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+</project>
