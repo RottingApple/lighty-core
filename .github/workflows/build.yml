@@ -38,7 +38,7 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Maven install (skip test)
-      run: mvn install -DskipTests=true -B -V -Psource-quality
+      run: mvn install -DskipTests=true -B -V -Psource-quality -P docker
     - name: Maven test + SonarCloud
       if: ${{ env.SONAR_TOKEN != 0 }}
       run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
@@ -54,3 +54,33 @@ jobs:
       with:
         name: Surefire-Test-Results
         path: ~/**/surefire-reports/**/*.txt
+    - name: Install Helm
+      run: sudo snap install helm --classic
+    - name: Create microk8s cluster
+      uses: balchua/microk8s-actions@v0.2.1
+      with:
+        channel: '1.20/stable'
+        addons: '["helm", "proxy"]'
+    - name: Init helm
+      run: |
+        sudo microk8s kubectl create serviceaccount tiller --namespace kube-system
+        sudo microk8s kubectl create clusterrolebinding tiller-cluster-rule \
+        --clusterrole=cluster-admin \
+        --serviceaccount=kube-system:tiller
+        sudo microk8s helm init --stable-repo-url https://charts.helm.sh/stable --service-account tiller --wait
+    - name: Upload docker image
+      run: |
+        docker save --output="./lighty-image:latest.tar" lighty-rnc:latest
+        sudo microk8s ctr --namespace k8s.io image import lighty-image\:latest.tar
+        rm lighty-image:latest.tar
+    - name: Deploy app to microk8s cluster
+      run: |
+        sudo microk8s helm install --name=lighty-rnc \
+        lighty-applications/lighty-rnc-app-aggregator/lighty-rnc-app-helm/helm/lighty-rnc-app-helm/
+    - name: Lighty-rnc-app get operations health-check
+      run: |
+        sleep 100  # Wait for app controller to start
+        netstat -tlpn
+        sudo microk8s kubectl get services
+        sudo microk8s kubectl get pods
+        curl --user admin:admin -H "Content-Type: application/json" --insecure http://localhost:30888/restconf/operations
